@@ -1,103 +1,149 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import { PortfolioTemplate } from "@/components/templates/PortfolioTemplate";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+const portfolioData = {
+  personal: {
+    name: "Trần Hoàng Trung Anh",
+    title: "Frontend Developer",
+    description:
+      "Passionate Frontend Developer with experience in modern web technologies. Recent graduate from FPT University with a strong foundation in React, Next.js, Expo and Node.js.",
+    avatarUrl:
+      "https://res.cloudinary.com/core-app/image/upload/v1752314236/465847014_543426968395672_883528601496996806_n_amebqj.jpg",
+    cvUrl: "/cv.pdf",
+  },
+  about: {
+    content:
+      "Passionate Frontend Developer with hands-on experience in building modern web applications using React, Next.js, and TypeScript. Fresh graduate from FPT University with a Software Engineering degree, I have gained practical experience through internships and personal projects. I enjoy creating user-friendly interfaces and staying up-to-date with the latest web technologies. My goal is to contribute to innovative projects while continuously learning and growing as a developer.",
+  },
+  skills: {
+    "Programming Languages": ["TypeScript", "JavaScript", "Java"],
+    "Frameworks/Libraries": [
+      "ReactJS",
+      "NextJS",
+      "NestJS",
+      "Expo",
+      "Redux Toolkit",
+      "Framer Motion",
+      "React Native",
+      "TailwindCSS",
+      "ThreeJS",
+      "NextAuth",
+      "Prisma",
+      "ReactQuery",
+    ],
+    "Tools & Platforms": [
+      "Docker",
+      "Git",
+      "Figma",
+      "Postman",
+      "WebSocket",
+      "Bun",
+      "VS Code",
+    ],
+    Database: ["PostgreSQL", "MySQL", "MongoDB"],
+  },
+  experience: [
+    {
+      title: "Frontend Developer Intern",
+      company: "FPT Software",
+      period: "Jun 2024 - Sep 2024",
+      description:
+        "Worked on the FAMS (Faculty Academic Management System) project, developing responsive web interfaces and implementing user-friendly features for academic management.",
+      technologies: [
+        "React",
+        "TypeScript",
+        "Redux",
+        "Material-UI",
+        "REST APIs",
+      ],
+      projects: [
+        "Developed student management module with CRUD operations",
+        "Implemented responsive dashboard with data visualization",
+        "Created user authentication and authorization features",
+      ],
+    },
+  ],
+  projects: [
+    {
+      title: "PCDACO - Rental Car Platform",
+      description:
+        "A comprehensive car rental platform built with modern technologies, featuring real-time location tracking, booking management, and payment integration.",
+      technologies: [
+        "Expo",
+        "NextJS",
+        "React Native",
+        "Mapbox",
+        "TypeScript",
+        "Node.js",
+      ],
+      githubUrl: "https://github.com/username/pcdaco",
+      imageUrl: "/api/placeholder/400/250",
+    },
+    {
+      title: "VitomOrg - 3D Ecommerce Platform",
+      description:
+        "An innovative e-commerce platform featuring 3D product visualization, allowing customers to interact with products in a virtual environment before purchase.",
+      technologies: [
+        "ThreeJS",
+        "React",
+        "NextJS",
+        "WebGL",
+        "TypeScript",
+        "MongoDB",
+      ],
+      githubUrl: "https://github.com/username/vitomorg",
+      liveUrl: "https://vitomorg.vercel.app",
+      imageUrl: "/api/placeholder/400/250",
+    },
+  ],
+  education: {
+    education: [
+      {
+        degree: "Bachelor of Software Engineering",
+        institution: "FPT University",
+        period: "09/2020 - 05/2025",
+        major: "Software Engineering",
+      },
+    ],
+    certifications: [
+      {
+        name: "Academic English Certificate",
+        issuer: "FPT University",
+      },
+      {
+        name: "Software Development Lifecycle",
+        issuer: "FPT University",
+      },
+      {
+        name: "Project Management Fundamentals",
+        issuer: "FPT University",
+      },
+    ],
+    languages: [
+      {
+        language: "English",
+        level: "B1",
+      },
+      {
+        language: "Japanese",
+        level: "N4",
+      },
+      {
+        language: "Vietnamese",
+        level: "Native",
+      },
+    ],
+  },
+  contact: {
+    email: "developer@example.com",
+    phone: "+84 xxx xxx xxx",
+    address: "Ho Chi Minh City, Vietnam",
+    githubUrl: "https://github.com/username",
+    linkedinUrl: "https://linkedin.com/in/username",
+  },
+};
+
+export default function HomePage() {
+  return <PortfolioTemplate data={portfolioData} />;
 }
