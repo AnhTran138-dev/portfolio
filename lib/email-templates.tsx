@@ -100,7 +100,6 @@ ${message}
 // Auto-reply template for the sender
 export const AutoReplyTemplate = ({
   name,
-  appName,
 }: {
   name: string;
   appName: string;
