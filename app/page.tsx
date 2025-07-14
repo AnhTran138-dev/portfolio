@@ -7,9 +7,9 @@ const portfolioData = {
     name: "Trần Hoàng Trung Anh",
     title: "Frontend Developer",
     description:
-      "I have hands-on experience with modern frameworks like Next.js, Expo, and React through both learning and real-world projects.",
+      "Passionate Frontend Developer with experience in modern web technologies. Recent graduate from FPT University with a strong foundation in React, Next.js, Expo and Node.js.",
     avatarUrl:
-      "https://res.cloudinary.com/core-app/image/upload/v1752459286/avatar-min-Photoroom_iflrso.png",
+      "https://res.cloudinary.com/core-app/image/upload/v1752314236/465847014_543426968395672_883528601496996806_n_amebqj.jpg",
     cvUrl: "/pdf/Resume-FE.pdf",
   },
   about: {
