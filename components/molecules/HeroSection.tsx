@@ -1,10 +1,7 @@
-"use client";
-
 import React from "react";
 import { motion } from "framer-motion";
-import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaEnvelope, FaDownload } from "react-icons/fa";
 import { Button } from "../ui/button";
-import { FadeIn } from "../atoms/AnimatedText";
 import Image from "next/image";
 
 interface HeroSectionProps {
@@ -20,7 +17,6 @@ interface HeroSectionProps {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   name,
-  title,
   description,
   avatarUrl,
   githubUrl,
@@ -29,174 +25,277 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   cvUrl,
 }) => {
   return (
-    <section className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden">
-      {/* Animated background */}
+    <section className="min-h-screen bg-black relative overflow-hidden sm:py-0 py-24">
+      {/* Geometric background elements */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
+        {/* Main background shapes */}
         <motion.div
-          animate={{
-            backgroundPosition: ["0% 0%", "100% 100%"],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 20% 50%, rgb(6, 182, 212) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, rgb(59, 130, 246) 0%, transparent 50%),
-              radial-gradient(circle at 40% 80%, rgb(147, 51, 234) 0%, transparent 50%)
-            `,
-            backgroundSize: "100% 100%",
-          }}
+          initial={{ scale: 0, rotate: 0 }}
+          animate={{ scale: 1, rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute top-20 right-20 w-4 h-4 bg-cyan-400 rounded-full opacity-60"
+        />
+
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="absolute top-1/2 right-20 w-3 h-3 bg-green-400 rounded-full"
+        />
+
+        {/* Large hero shape - similar to red blob in image */}
+        <motion.div
+          initial={{ scale: 0, x: 100 }}
+          animate={{ scale: 1, x: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-1/4"
+        >
+          <div className="w-[600px] h-[500px] bg-gradient-to-br from-cyan-500/20 via-blue-500/30 to-purple-500/20 rounded-full blur-3xl" />
+          <div className="absolute inset-0 w-[550px] h-[450px] bg-gradient-to-tl from-cyan-400/10 to-blue-400/20 rounded-[60%_40%_40%_60%] animate-pulse" />
+        </motion.div>
+
+        {/* Decorative dots pattern */}
+        <div className="absolute bottom-32 right-32">
+          <div className="grid grid-cols-4 gap-2">
+            {Array.from({ length: 16 }).map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="w-2 h-2 bg-cyan-400 rounded-full opacity-40"
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Additional floating elements */}
+        <motion.div
+          animate={{ y: [0, -20, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/4 right-1/4 w-6 h-6 border-2 border-cyan-400 rotate-45 opacity-30"
         />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
-        <FadeIn delay={0.2}>
-          <div className="mb-12">
+      {/* Main content */}
+      <div className="relative z-10 flex items-center min-h-screen">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left side - Text content */}
             <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
-              className="relative w-40 h-40 mx-auto mb-8"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="space-y-8 lg:pr-8"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-full p-1">
-                <div className="w-full h-full bg-black rounded-full p-2">
-                  <div className="w-full h-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-full overflow-hidden">
-                    <Image
-                      src={avatarUrl || "/avatar-placeholder.png"}
-                      alt={name}
-                      width={160}
-                      height={160}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              </div>
-              {/* Floating particles */}
+              {/* Greeting */}
               <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                className="absolute -inset-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
               >
-                <div className="absolute top-0 left-1/2 w-2 h-2 bg-cyan-400 rounded-full -translate-x-1/2"></div>
-                <div className="absolute bottom-0 right-0 w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                <div className="absolute left-0 top-1/2 w-1 h-1 bg-purple-500 rounded-full -translate-y-1/2"></div>
+                <span className="text-lg text-gray-300 font-medium">
+                  Hey, I&apos;m a
+                </span>
               </motion.div>
-            </motion.div>
-          </div>
-        </FadeIn>
 
-        <FadeIn delay={0.4}>
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight">
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
-              {name}
-            </span>
-          </h1>
-        </FadeIn>
-
-        <FadeIn delay={0.6}>
-          <h2 className="text-2xl md:text-3xl font-bold mb-8">
-            <span className="text-white">I&apos;m a </span>
-            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-              {title}
-            </span>
-          </h2>
-        </FadeIn>
-
-        <FadeIn delay={0.8}>
-          <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            {description}
-          </p>
-        </FadeIn>
-
-        <FadeIn delay={1.0}>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
-            {cvUrl && (
+              {/* Main title */}
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="space-y-2"
               >
+                <h1 className="text-4xl lg:text-6xl font-bold text-white leading-tight">
+                  <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                    Frontend
+                  </span>
+                  &nbsp;
+                  <span className="text-white">Developer.</span>
+                </h1>
+              </motion.div>
+
+              {/* Description */}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="text-lg text-gray-300 leading-relaxed max-w-xl"
+              >
+                {description}
+              </motion.p>
+
+              {/* Action buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="flex flex-col sm:flex-row gap-4"
+              >
+                {/* Hire Me button */}
+                <Button className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 transform hover:scale-105">
+                  <a href="#contact">Hire Me</a>
+                </Button>
+
+                {/* Let's Chat button */}
                 <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-8 py-3 rounded-full shadow-2xl shadow-blue-500/25 border-0"
-                  onClick={() => window.open(cvUrl, "_blank")}
+                  variant="outline"
+                  className="border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black font-semibold px-8 py-6 text-lg rounded-xl transition-all duration-300 bg-transparent"
                 >
-                  Download CV
+                  <a
+                    href={`mailto:${email}`}
+                    className="flex items-center gap-2"
+                  >
+                    <FaEnvelope className="text-sm" />
+                    Let&apos;s Chat
+                  </a>
                 </Button>
               </motion.div>
-            )}
-            <div className="flex gap-4">
-              {githubUrl && (
-                <motion.a
-                  href={githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.2, y: -2 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="group relative p-4 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full hover:border-gray-500 transition-all duration-300"
-                >
-                  <FaGithub
-                    size={24}
-                    className="text-white group-hover:text-cyan-400 transition-colors"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </motion.a>
-              )}
-              {linkedinUrl && (
-                <motion.a
-                  href={linkedinUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.2, y: -2 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="group relative p-4 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full hover:border-gray-500 transition-all duration-300"
-                >
-                  <FaLinkedin
-                    size={24}
-                    className="text-white group-hover:text-blue-400 transition-colors"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </motion.a>
-              )}
-              {email && (
-                <motion.a
-                  href={`mailto:${email}`}
-                  whileHover={{ scale: 1.2, y: -2 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="group relative p-4 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full hover:border-gray-500 transition-all duration-300"
-                >
-                  <FaEnvelope
-                    size={24}
-                    className="text-white group-hover:text-purple-400 transition-colors"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </motion.a>
-              )}
-            </div>
-          </div>
-        </FadeIn>
 
-        {/* Scroll indicator */}
-        <FadeIn delay={1.2}>
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          >
-            <div className="w-6 h-10 border-2 border-gray-600 rounded-full relative">
+              {/* Social links */}
               <motion.div
-                animate={{ y: [0, 12, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-1 h-3 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full absolute left-1/2 top-2 transform -translate-x-1/2"
-              />
-            </div>
-          </motion.div>
-        </FadeIn>
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1 }}
+                className="flex items-center gap-6 pt-4"
+              >
+                {githubUrl && (
+                  <a
+                    href={githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-cyan-400 transition-colors duration-300 transform hover:scale-110"
+                  >
+                    <FaGithub size={24} />
+                  </a>
+                )}
+                {linkedinUrl && (
+                  <a
+                    href={linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-cyan-400 transition-colors duration-300 transform hover:scale-110"
+                  >
+                    <FaLinkedin size={24} />
+                  </a>
+                )}
+                {email && (
+                  <a
+                    href={`mailto:${email}`}
+                    className="text-gray-400 hover:text-cyan-400 transition-colors duration-300 transform hover:scale-110"
+                  >
+                    <FaEnvelope size={24} />
+                  </a>
+                )}
+                {cvUrl && (
+                  <a
+                    href={cvUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-cyan-400 transition-colors duration-300 transform hover:scale-110 flex items-center gap-2 text-sm"
+                  >
+                    <FaDownload size={20} />
+                    <span>Resume</span>
+                  </a>
+                )}
+              </motion.div>
+            </motion.div>
+
+            {/* Right side - Avatar */}
+            <motion.div
+              initial={{ opacity: 0, x: 50, scale: 0.8 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="relative flex justify-center lg:justify-end"
+            >
+              <div className="relative">
+                {/* Avatar container with gradient border */}
+                <div className="relative w-80 h-80 lg:w-96 lg:h-96">
+                  {/* Gradient border effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 rounded-full blur-md opacity-75 animate-pulse"></div>
+
+                  {/* Avatar image */}
+                  <div className="relative w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 rounded-full p-2 z-10 overflow-hidden">
+                    <div className=" rounded-full overflow-hidden  ">
+                      {avatarUrl ? (
+                        <Image
+                          src={avatarUrl}
+                          alt={name}
+                          width={400}
+                          height={400}
+                          className="w-full h-full object-fill "
+                          priority
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
+                          <span className="text-6xl text-cyan-400 font-bold">
+                            {name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Floating elements around avatar */}
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 20,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    className="absolute -top-4 -right-4 w-8 h-8 bg-cyan-400 rounded-full flex items-center justify-center text-black font-bold text-sm"
+                  >
+                    JS
+                  </motion.div>
+
+                  <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{
+                      duration: 25,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    className="absolute -bottom-4 -left-4 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm"
+                  >
+                    TS
+                  </motion.div>
+
+                  <motion.div
+                    animate={{ y: [-10, 10, -10] }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                    className="absolute top-1/4 -left-8 w-6 h-6 bg-green-400 rounded-full opacity-80"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 1.2 }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="w-6 h-10 border-2 border-cyan-400 rounded-full flex justify-center opacity-60"
+        >
+          <motion.div
+            animate={{ y: [0, 12, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="w-1 h-3 bg-cyan-400 rounded-full mt-2"
+          />
+        </motion.div>
+      </motion.div>
     </section>
   );
 };

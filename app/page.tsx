@@ -7,10 +7,10 @@ const portfolioData = {
     name: "Trần Hoàng Trung Anh",
     title: "Frontend Developer",
     description:
-      "Passionate Frontend Developer with experience in modern web technologies. Recent graduate from FPT University with a strong foundation in React, Next.js, Expo and Node.js.",
+      "I have hands-on experience with modern frameworks like Next.js, Expo, and React through both learning and real-world projects.",
     avatarUrl:
-      "https://res.cloudinary.com/core-app/image/upload/v1752314236/465847014_543426968395672_883528601496996806_n_amebqj.jpg",
-    cvUrl: "/cv.pdf",
+      "https://res.cloudinary.com/core-app/image/upload/v1752459286/avatar-min-Photoroom_iflrso.png",
+    cvUrl: "/pdf/Resume-FE.pdf",
   },
   about: {
     content:
@@ -77,7 +77,7 @@ const portfolioData = {
         "TypeScript",
         "Node.js",
       ],
-      githubUrl: "https://github.com/username/pcdaco",
+      githubUrl: "https://github.com/orgs/PCDACO/repositories?type=source",
       imageUrl: "/api/placeholder/400/250",
     },
     {
@@ -136,11 +136,12 @@ const portfolioData = {
     ],
   },
   contact: {
-    email: "developer@example.com",
-    phone: "+84 xxx xxx xxx",
-    address: "Ho Chi Minh City, Vietnam",
-    githubUrl: "https://github.com/username",
-    linkedinUrl: "https://linkedin.com/in/username",
+    email: "anhservice@gmail.com",
+    phone: "0961790276",
+    address: "Ho Chi Minh City",
+    githubUrl: "https://github.com/AnhTran138-dev",
+    linkedinUrl: "https://www.linkedin.com/in/tran-hoang-trung-anh/",
+    facebookUrl: "https://www.facebook.com/trung.anh.756248",
   },
 };
 

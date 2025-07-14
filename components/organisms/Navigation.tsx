@@ -50,10 +50,10 @@ const Navigation: React.FC = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={cn(
-        " sm:fixed top-0 left-0 right-0 z-50 transition-all duration-300 sm:bg-black/40 bg-transparent/10 backdrop-blur-md shadow-2xl"
+        "sm:fixed top-0 left-0 right-0 z-50 transition-all duration-300  backdrop-blur-md shadow-2xl"
       )}
     >
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4 hidden sm:block">
         <div className="flex justify-center items-center py-4">
           <div className="hidden md:flex space-x-8">
             {navItems.map((item) => (
@@ -84,7 +84,7 @@ const Navigation: React.FC = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* <div className="md:hidden">
             <button className="text-gray-400 hover:text-white transition-colors p-2">
               <svg
                 className="w-6 h-6"
@@ -100,7 +100,7 @@ const Navigation: React.FC = () => {
                 />
               </svg>
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </motion.nav>

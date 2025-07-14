@@ -100,11 +100,11 @@ export const PortfolioTemplate: React.FC<PortfolioTemplateProps> = ({
 
       <ProjectsSection projects={data.projects} />
 
-      <EducationSection
+      {/* <EducationSection
         education={data.education.education}
         certifications={data.education.certifications}
         languages={data.education.languages}
-      />
+      /> */}
 
       <ContactSection contactInfo={data.contact} />
 
