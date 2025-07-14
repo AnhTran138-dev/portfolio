@@ -62,10 +62,11 @@ interface PortfolioData {
   };
   contact: {
     email: string;
-    phone?: string;
-    address?: string;
+    phone: string;
+    address: string;
     githubUrl?: string;
     linkedinUrl?: string;
+    facebookUrl?: string;
   };
 }
 
