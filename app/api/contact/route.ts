@@ -1,220 +1,244 @@
-import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
+import { getEmailConfig, validateEmailConfig } from "@/lib/email-config";
+import {
+  ContactEmailTemplate,
+  AutoReplyTemplate,
+  ContactEmailTemplatePlainText,
+  AutoReplyTemplatePlainText,
+} from "@/lib/email-templates";
+import { z } from "zod";
 
-// Validate environment variables
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const CONTACT_EMAIL =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL || "anhthtservice@gmail.com";
+// Rate limiting (simple in-memory store)
+const rateLimit = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX_REQUESTS = 3; // Max 3 requests per 15 minutes
 
-if (!RESEND_API_KEY) {
-  console.error("RESEND_API_KEY is not configured");
+// Validation schema
+const contactSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().email("Invalid email address"),
+  subject: z.string().min(5, "Subject must be at least 5 characters").max(200),
+  message: z
+    .string()
+    .min(10, "Message must be at least 10 characters")
+    .max(2000),
+});
+
+function checkRateLimit(identifier: string): boolean {
+  const now = Date.now();
+  const requests = rateLimit.get(identifier) || [];
+
+  // Remove old requests
+  const recentRequests = requests.filter(
+    (time) => now - time < RATE_LIMIT_WINDOW
+  );
+
+  if (recentRequests.length >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+
+  recentRequests.push(now);
+  rateLimit.set(identifier, recentRequests);
+  return true;
 }
 
-const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
-
-interface ContactFormData {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
-
-interface ApiResponse {
-  message?: string;
-  error?: string;
-  id?: string;
-}
-
-export async function POST(
-  request: NextRequest
-): Promise<NextResponse<ApiResponse>> {
+export async function POST(request: NextRequest) {
   try {
-    // Check if Resend is properly configured
-    if (!resend || !RESEND_API_KEY) {
-      console.error("Email service not configured");
+    // Check if email configuration is valid
+    if (!validateEmailConfig()) {
+      console.error("Invalid email configuration");
       return NextResponse.json(
         {
+          success: false,
           error:
-            "Email service is currently unavailable. Please try contacting directly via email.",
+            "Email service is currently unavailable. Please try again later.",
         },
         { status: 503 }
       );
     }
 
-    // Parse and validate request body
-    let body: ContactFormData;
-    try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json(
-        { error: "Invalid request format" },
-        { status: 400 }
-      );
-    }
+    const body = await request.json();
 
-    const { name, email, subject, message } = body;
-
-    // Validate required fields
-    if (
-      !name?.trim() ||
-      !email?.trim() ||
-      !subject?.trim() ||
-      !message?.trim()
-    ) {
-      return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
-      );
-    }
-
-    // Validate field lengths
-    if (name.length > 100) {
-      return NextResponse.json(
-        { error: "Name is too long (max 100 characters)" },
-        { status: 400 }
-      );
-    }
-
-    if (subject.length > 200) {
-      return NextResponse.json(
-        { error: "Subject is too long (max 200 characters)" },
-        { status: 400 }
-      );
-    }
-
-    if (message.length > 5000) {
-      return NextResponse.json(
-        { error: "Message is too long (max 5000 characters)" },
-        { status: 400 }
-      );
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: "Please enter a valid email address" },
-        { status: 400 }
-      );
-    }
-
-    // Sanitize inputs
-    const sanitizedData = {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      subject: subject.trim(),
-      message: message.trim(),
-    };
-
-    // Send email using Resend
-    const { data, error } = await resend.emails.send({
-      from: "Portfolio Contact <onboarding@resend.dev>",
-      to: [CONTACT_EMAIL],
-      replyTo: sanitizedData.email,
-      subject: `Portfolio Contact: ${sanitizedData.subject}`,
-      html: generateEmailTemplate(sanitizedData),
-    });
-
-    if (error) {
-      console.error("Resend API error:", error);
-
-      // Handle specific Resend errors
-      if (error.message?.includes("API key")) {
-        return NextResponse.json(
-          {
-            error: "Email service configuration error. Please try again later.",
-          },
-          { status: 503 }
-        );
-      }
-
-      if (error.message?.includes("rate limit")) {
-        return NextResponse.json(
-          { error: "Too many emails sent. Please try again later." },
-          { status: 429 }
-        );
-      }
-
+    // Validate input
+    const validationResult = contactSchema.safeParse(body);
+    if (!validationResult.success) {
       return NextResponse.json(
         {
-          error: "Failed to send email. Please try again or contact directly.",
+          success: false,
+          error: "Invalid form data",
+          details: validationResult.error.issues,
+        },
+        { status: 400 }
+      );
+    }
+
+    const { name, email, subject, message } = validationResult.data;
+
+    console.log("📧 Received contact form submission:", {
+      name,
+      email,
+      subject,
+      messageLength: message.length,
+    });
+
+    // Rate limiting
+    const clientIP =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+
+    if (!checkRateLimit(clientIP)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Too many requests. Please try again later.",
+        },
+        { status: 429 }
+      );
+    }
+
+    // Get email configuration
+    const config = getEmailConfig();
+    console.log("📋 Email config:", {
+      fromEmail: config.fromEmail,
+      contactEmail: config.contactEmail,
+      hasApiKey: !!config.apiKey,
+    });
+
+    const resend = new Resend(config.apiKey);
+
+    const timestamp = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Ho_Chi_Minh",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    // Send email to yourself (notification)
+    console.log("📬 Sending notification email to:", config.contactEmail);
+    const emailToSelf = await resend.emails.send({
+      from: config.fromEmail,
+      to: config.contactEmail,
+      subject: `New Contact: ${subject}`,
+      replyTo: email, // Email của khách hàng
+      html: ContactEmailTemplate({
+        name,
+        email,
+        subject,
+        message,
+        appName: config.appName || "Portfolio",
+        appUrl: config.appUrl || "",
+        timestamp,
+      }),
+      text: ContactEmailTemplatePlainText({
+        name,
+        email,
+        subject,
+        message,
+        appName: config.appName || "Portfolio",
+        appUrl: config.appUrl || "",
+        timestamp,
+      }),
+      // Anti-spam headers
+      headers: {
+        "X-Priority": "3",
+        "X-Mailer": "Portfolio Contact Form",
+        "X-Entity-ID": `contact-${Date.now()}`,
+      },
+    });
+
+    if (emailToSelf.error) {
+      console.error("❌ Failed to send notification email:", emailToSelf.error);
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Failed to send message. Please try again later.",
         },
         { status: 500 }
       );
     }
 
+    console.log(
+      "✅ Notification email sent successfully:",
+      emailToSelf.data?.id
+    );
+
+    // Send auto-reply to the sender - Move this BEFORE the success response
+    console.log("📤 Sending auto-reply to:", email);
+    try {
+      const autoReplyResult = await resend.emails.send({
+        from: config.fromEmail, // onboarding@resend.dev
+        to: email, // Email khách hàng
+        subject: "Thank you for contacting me - Trần Hoàng Trung Anh",
+        html: AutoReplyTemplate({
+          name,
+          appName: config.appName || "Portfolio",
+        }),
+        text: AutoReplyTemplatePlainText({ name }),
+        // Anti-spam headers for auto-reply
+        headers: {
+          "X-Priority": "3",
+          "X-Mailer": "Portfolio Auto-Reply System",
+          "X-Auto-Response-Suppress": "DR, RN, NRN, OOF, AutoReply",
+          "Auto-Submitted": "auto-replied",
+        },
+      });
+
+      if (autoReplyResult.error) {
+        console.error("❌ Auto-reply failed:", autoReplyResult.error);
+        // Log detailed error for debugging
+        console.error("Auto-reply error details:", {
+          error: autoReplyResult.error,
+          fromEmail: config.fromEmail,
+          toEmail: email,
+          hasApiKey: !!config.apiKey,
+        });
+      } else {
+        console.log(
+          "✅ Auto-reply sent successfully:",
+          autoReplyResult.data?.id
+        );
+      }
+    } catch (autoReplyError) {
+      console.error("❌ Auto-reply exception:", autoReplyError);
+      // Log more details about the error
+      if (autoReplyError instanceof Error) {
+        console.error("Auto-reply error message:", autoReplyError.message);
+        console.error("Auto-reply error stack:", autoReplyError.stack);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Message sent successfully! I will get back to you soon.",
+    });
+  } catch (error) {
+    console.error("❌ Contact form error:", error);
     return NextResponse.json(
       {
-        message: "Message sent successfully! I'll get back to you soon.",
-        id: data?.id,
+        success: false,
+        error: "An unexpected error occurred. Please try again later.",
       },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Unexpected server error:", error);
-    return NextResponse.json(
-      { error: "Something went wrong. Please try again later." },
       { status: 500 }
     );
   }
 }
 
-// Separate function to generate email template
-function generateEmailTemplate(data: ContactFormData): string {
-  const { name, email, subject, message } = data;
-  const timestamp = new Date().toLocaleString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZoneName: "short",
-  });
-
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #1a1a1a; color: #ffffff;">
-      <div style="background: linear-gradient(135deg, #06b6d4, #3b82f6); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
-        <h1 style="margin: 0; font-size: 28px; font-weight: bold;">New Portfolio Contact</h1>
-        <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 16px;">From your portfolio website</p>
-      </div>
-      
-      <div style="background-color: #2a2a2a; border-radius: 12px; padding: 30px; margin-bottom: 20px;">
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #06b6d4; margin: 0 0 8px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Contact Information</h3>
-          <div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #06b6d4;">
-            <p style="margin: 0 0 10px 0;"><strong style="color: #06b6d4;">Name:</strong> ${name}</p>
-            <p style="margin: 0 0 10px 0;"><strong style="color: #06b6d4;">Email:</strong> ${email}</p>
-            <p style="margin: 0;"><strong style="color: #06b6d4;">Subject:</strong> ${subject}</p>
-          </div>
-        </div>
-        
-        <div>
-          <h3 style="color: #06b6d4; margin: 0 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Message</h3>
-          <div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6;">
-            <p style="margin: 0; line-height: 1.6; white-space: pre-wrap;">${message}</p>
-          </div>
-        </div>
-      </div>
-      
-      <div style="text-align: center; padding: 20px; background-color: #2a2a2a; border-radius: 12px;">
-        <p style="margin: 0; color: #888; font-size: 14px;">
-          This email was sent from your portfolio contact form
-        </p>
-        <p style="margin: 5px 0 0 0; color: #06b6d4; font-size: 12px;">
-          ${timestamp}
-        </p>
-      </div>
-    </div>
-  `;
-}
-
-// Health check endpoint
-export async function GET(): Promise<NextResponse> {
-  const isConfigured = !!RESEND_API_KEY;
-
-  return NextResponse.json({
-    status: isConfigured ? "configured" : "not_configured",
-    service: "contact-api",
-  });
+// Handle preflight requests
+export async function OPTIONS() {
+  return NextResponse.json(
+    {},
+    {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    }
+  );
 }
