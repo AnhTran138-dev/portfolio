@@ -25,7 +25,7 @@ const useResponsiveConfig = (): ScreenConfig => {
     offset: 21,
     size: 85,
     scale: 1.5,
-    borderWidth: "border-l-4 border-t-4",
+    borderWidth: "border-l-4 border-t-4 border-b-4 border-r-4",
     cornerSize: "w-6 h-6",
     defaultSize: "w-12 h-12",
   });
@@ -38,7 +38,7 @@ const useResponsiveConfig = (): ScreenConfig => {
           offset: 12,
           size: 50,
           scale: 1.1,
-          borderWidth: "border-l-2 border-t-2",
+          borderWidth: "border-l-2 border-t-2 ",
           cornerSize: "w-3 h-3",
           defaultSize: "w-6 h-6",
         });
@@ -97,7 +97,7 @@ export const DecorativeCorners = memo<DecorateCornersProps>(
         {/* Top Left Corner */}
         <motion.div
           className={cn(
-            "absolute border-cyan-400 rounded-tl-lg pointer-events-none",
+            "absolute border-cyan-400 sm:rounded-tl-lg rounded-tl-sm pointer-events-none",
             borderWidth,
             hoveredSkill ? cornerSize : defaultSize
           )}
@@ -121,7 +121,7 @@ export const DecorativeCorners = memo<DecorateCornersProps>(
         {/* Top Right Corner */}
         <motion.div
           className={cn(
-            "absolute border-cyan-400 rounded-tr-lg pointer-events-none",
+            "absolute border-cyan-400 sm:rounded-tr-lg rounded-tr-sm pointer-events-none",
             borderWidth.replace("border-l-", "border-r-"),
             hoveredSkill ? cornerSize : defaultSize
           )}
@@ -145,7 +145,7 @@ export const DecorativeCorners = memo<DecorateCornersProps>(
         {/* Bottom Left Corner */}
         <motion.div
           className={cn(
-            "absolute border-cyan-400 rounded-bl-lg pointer-events-none",
+            "absolute border-cyan-400 sm:rounded-bl-lg rounded-bl-sm pointer-events-none",
             borderWidth.replace("border-t-", "border-b-"),
             hoveredSkill ? cornerSize : defaultSize
           )}
@@ -169,7 +169,7 @@ export const DecorativeCorners = memo<DecorateCornersProps>(
         {/* Bottom Right Corner */}
         <motion.div
           className={cn(
-            "absolute border-cyan-400 rounded-br-lg pointer-events-none",
+            "absolute border-cyan-400 sm:rounded-br-lg rounded-br-sm pointer-events-none",
             borderWidth
               .replace("border-l-", "border-r-")
               .replace("border-t-", "border-b-"),

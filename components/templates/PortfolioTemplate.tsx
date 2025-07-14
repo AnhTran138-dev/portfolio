@@ -8,7 +8,6 @@ import { AboutSection } from "../organisms/AboutSection";
 import { SkillsSection } from "../organisms/SkillsSection";
 import { ExperienceSection } from "../organisms/ExperienceSection";
 import { ProjectsSection } from "../organisms/ProjectsSection";
-import { EducationSection } from "../organisms/EducationSection";
 import { ContactSection } from "../organisms/ContactSection";
 
 interface PortfolioData {

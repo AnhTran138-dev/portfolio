@@ -52,7 +52,10 @@ export const SkillGrid = memo(
                 }}
                 onMouseEnter={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
-                  const gridRect = ref?.current?.getBoundingClientRect();
+                  let gridRect: DOMRect | undefined;
+                  if (ref && typeof ref !== "function" && ref.current) {
+                    gridRect = ref.current.getBoundingClientRect();
+                  }
                   if (gridRect) {
                     onSkillHover(skillIndex, {
                       x: rect.left - gridRect.left + rect.width / 2,
@@ -62,7 +65,7 @@ export const SkillGrid = memo(
                 }}
                 className={`
                 aspect-square flex items-center justify-center cursor-pointer
-                transition-all duration-300 relative group/cell
+                transition-all duration-200 relative group/cell
                 ${
                   isEvenPosition
                     ? "bg-gray-800/60 hover:bg-gray-700/80"
