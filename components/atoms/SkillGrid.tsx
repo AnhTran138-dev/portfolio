@@ -39,8 +39,8 @@ export const SkillGrid = memo(
                 transition={{
                   duration: 0.6,
                   delay: skillIndex * 0.05,
-                  type: "spring",
-                  stiffness: 100,
+                  type: "tween",
+                  stiffness: 120,
                 }}
                 viewport={{ once: true }}
                 animate={{
@@ -68,7 +68,7 @@ export const SkillGrid = memo(
                 transition-all duration-200 relative group/cell
                 ${
                   isEvenPosition
-                    ? "bg-gray-800/60 hover:bg-gray-700/80"
+                    ? "bg-gray-800/95 hover:bg-slate-600/90"
                     : "bg-gray-900/60 hover:bg-gray-800/80"
                 }
                 border border-gray-700/30 hover:border-cyan-500/50

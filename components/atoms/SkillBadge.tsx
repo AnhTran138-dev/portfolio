@@ -33,9 +33,12 @@ const getSkillIcon = (skill: string): string => {
   if (skillLower.includes("express")) return "logos:express";
   if (skillLower.includes("nextauth")) return "simple-icons:nextdotjs";
   if (skillLower.includes("prisma")) return "logos:prisma";
+  if (skillLower.includes("vite") || skillLower.includes("vitejs"))
+    return "logos:vitejs";
 
   // Tools & Platforms
   if (skillLower.includes("docker")) return "logos:docker-icon";
+  if (skillLower.includes("mapbox")) return "logos:mapbox-icon";
   if (skillLower.includes("git")) return "logos:git-icon";
   if (skillLower.includes("bun")) return "logos:bun";
   if (skillLower.includes("figma")) return "logos:figma";
@@ -43,10 +46,14 @@ const getSkillIcon = (skill: string): string => {
   if (skillLower.includes("websocket")) return "simple-icons:socketdotio";
   if (skillLower.includes("vs code") || skillLower.includes("vscode"))
     return "logos:visual-studio-code";
-  if (skillLower.includes("eas")) return "simple-icons:expo";
+  if (skillLower.includes("cloudinary")) return "simple-icons:cloudinary";
+  if (skillLower.includes("firebase")) return "logos:firebase";
+  if (skillLower.includes("copilot")) return "logos:github-copilot";
+  if (skillLower.includes("cursor")) return "logos:cursor";
+  if (skillLower.includes("jwt")) return "logos:jwt-icon";
 
   // Databases
-  if (skillLower.includes("mysql")) return "logos:mysql-icon";
+  if (skillLower.includes("mysql")) return "logos:mysql";
   if (skillLower.includes("postgresql") || skillLower.includes("postgres"))
     return "logos:postgresql";
   if (skillLower.includes("mongodb") || skillLower.includes("mongo"))

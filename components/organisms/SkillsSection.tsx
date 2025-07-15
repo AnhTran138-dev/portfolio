@@ -60,7 +60,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skills }) => {
         <SkillsHeader />
 
         {/* Unified Chess Grid */}
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto" onMouseLeave={handleMouseLeave}>
           <div className="relative p-4 md:p-6 lg:p-8">
             {/* Grid Background */}
             <ChessBackground />
@@ -75,12 +75,6 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skills }) => {
 
             {/* Dynamic Decorative corners */}
             <DecorativeCorners hoveredSkill={hoveredSkill} />
-
-            {/* Grid container mouse leave handler */}
-            <div
-              className="absolute inset-0 pointer-events-auto"
-              onMouseLeave={handleMouseLeave}
-            />
           </div>
         </div>
 
